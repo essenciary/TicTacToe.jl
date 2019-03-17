@@ -1,4 +1,4 @@
-# Title
+# Learning Julia: It's All Fun and Games!
 
 In this post I'm going to show you how to use Julia to develop a game of Tic-Tac-Toe. Tic-Tac-Toe is traditionally played with pen and paper, by two players, on a 3x3 square grid. One player is X and the other player is O. They both take turns placing their tokens on any empty board cell (X starts the game). The winner is the player which makes three in a row, either horizontally, vertically or diagonally. 
 
@@ -526,8 +526,7 @@ Your move, X
 
 ## What's next? 
 
+The full code is available at https://github.com/essenciary/TicTacToe.jl
 
+Follow me on Twitter @essenciary https://twitter.com/essenciary to be notified about the upcoming chapters in our sequel. In the second part we'll build a smart Tic-Tac-Toe agent using Julia and we'll play against it. In the third, we'll publish our game on the internet, as a web app, allowing remote users to play against our bot. And in the 4th part, we'll construct a neural network and we'll train it using adversarial  reinforcement learning provided by our Tic-Tac-Toe bot. See you soon! 
 
-You can further improve your Julia skills by enhancing the rendering of the board, for example by adding logic to display X in blue and O in red, and to display a winning series of 3 using green. 
-
-Follow me on Twitter @essenciary https://twitter.com/essenciary to be notified about the upcoming chapters in our sequel. In the second part we'll build a smart Tic-Tac-Toe agent using Julia and we'll play against it. In the third, we'll publish our game on the internet, as a web app, allowing remote users to play against our bot. Finally, in the 4th part, we'll construct a neural network and we'll train it using adversarial  reinforcement learning provided by our Tic-Tac-Toe bot. See you soon! 
