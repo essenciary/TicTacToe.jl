@@ -1,6 +1,6 @@
 # Learning Julia: It's All Fun and Games!
 
-In this post I'm going to show you how to use Julia to develop a game of Tic-Tac-Toe. Tic-Tac-Toe is traditionally played with pen and paper, by two players, on a 3x3 square grid. One player is X and the other player is O. They both take turns placing their tokens on any empty board cell (X starts the game). The winner is the player which makes three in a row, either horizontally, vertically or diagonally. 
+In this post I'm going to show you how to use Julia to build a game of Tic-Tac-Toe. Tic-Tac-Toe is traditionally played with pen and paper, by two players, on a 3x3 square grid. One player is X and the other player is O. They both take turns placing their tokens on any empty board cell. X starts the game. The winner is the player which places three in a row, either horizontally, vertically or diagonally. 
 
 ![image-20190316182123947](img/tic-tac-toe-board.jpg)
 
@@ -8,7 +8,7 @@ In this post I'm going to show you how to use Julia to develop a game of Tic-Tac
 
 #The Board
 
-Let's start with the most obvious object in our game: the board. Julia has a perfect data structure for representing it: the `Matrix`. Something like: 
+Let's start with the most obvious thing: the board. Julia has a perfect data structure for representing it: the `Matrix`. Something like: 
 
 ```julia
 julia> [1 2 3; 4 5 6; 7 8 9]
@@ -18,7 +18,7 @@ julia> [1 2 3; 4 5 6; 7 8 9]
  7  8  9
 ```
 
-Not bad. However, we'd like something which looks more like a proper game UI: 
+However, we'd like something which looks more like a proper game UI: 
 
 ```julia
 ┌─────┬───┬───┬───┐
@@ -32,17 +32,15 @@ Not bad. However, we'd like something which looks more like a proper game UI:
 └─────┴───┴───┴───┘
 ```
 
-We'll define our own `Board` type, which will wrap a `Matrix`, but will use fancier rendering. Time to get coding! 
+We'll define our own `Board` type, which will wrap a `Matrix`, but will use fancier rendering. 
 
-I'll use the Juno IDE but you can use whatever editor you want. However, we'll work with Julia files, which will be structured as a `Project`, so if you're planning on using a Jupyter notebook, that might not work too well. 
-
-To start with, create a folder for our Project. I'm calling mine `TicTacToe/`. Open the folder in Juno and start a Julia console. Please make sure you set the working directory to "Curent Project's Folder":
+We'll use  Juno as we'll work with Julia files, structured as a `Project`. Start by creating a folder for our game. I'm calling mine `TicTacToe`. Open the folder in Juno and start a Julia console. Please make sure you set the working directory to "Curent Project's Folder":
 
 ![image-20190316185628630](img/juno-set-working-folder.png)
 
-*Juno's menu and and active Julia REPL.*
+*Juno's menu and an active Julia REPL.*
 
-Next, let's create the project structure. The best practice is to create at least two extra folders: `src/` which hosts the Julia files, and `test/` which contains the tests. Let's have Julia create these for us: 
+Next, let's create the project structure. The best practice is to create at least two extra folders: `src/` which hosts the Julia files, and `test/` for the tests. With Julia: 
 
 ```julia
 julia> mkdir("src")
@@ -59,7 +57,7 @@ The file structure should look like this:
 
 ![image-20190316191944197](img/project-strucure.png)
 
-Now that we're done with the housework, we can start coding. We want to define a `Board` type - which is made up of 9 individual `Cell` objects. Here's a first iteration, wrapping everything within the `TicTacToe` module: 
+Now we can start coding. We want to define a `Board` type - which is made up of 9 individual `Cell` objects. Here's a first iteration, wrapping everything within the `TicTacToe` module: 
 
 ```julia
 # src/TicTacToe.jl
@@ -88,13 +86,13 @@ Board() = Board([ Cell() Cell() Cell();
 end
 ```
 
-We define a `Cell` type which wraps a `Char`. We also define three constants, `X`, `O`, and `EMPTY` which map to the corresponding chars `'X'`, `'O'` and `' '`. We use the space char to represent an empty cell, that is, one which is neither X nor O. It's good practice to use constants instead of the actual values, as this does not tie our code to a fixed representation (we might want to use ❌ and ⭕️). We also define a default constructor for `Cell()` which creates an empty cell. 
+We define a `Cell` type which wraps a `Char` value representing the token (X, O or empty). We also define three constants, `X`, `O`, and `EMPTY` which map to the corresponding chars `'X'`, `'O'` and `' '`. The space char represents an empty cell, one which is neither X nor O. It's good practice to use constants instead of  values, as this does not tie our code to a fixed representation (we might want to use ❌ and ⭕️). Finally, we define a default constructor for `Cell()` which creates an empty cell. 
 
-As for `Board`, it wraps a `Matrix` of `Cell` - and also provides a 0 arguments `Board()` constructor which creates a 3x3 matrix of empty `Cell` objects. 
+As for `Board`, it wraps a `Matrix` of `Cell` - and has a 0 arguments `Board()` constructor which creates a 3x3 matrix of empty `Cell` objects. 
 
 #### Rendering the board
 
-Julia provides a series of functions for rendering values on the screen. Three of the most important ones are `display`, `show`, and `print`. I've listed them from the richest output to simplest. For example, for the char `'X'` we'll have the following representations: 
+Julia provides a series of functions for rendering values on the screen. Three of the most important ones are `display`, `show`, and `print`,  sorted from richest output to simplest. For example, for the char `'X'` we have the following representations: 
 
 ```julia
 julia> display('X')
@@ -106,11 +104,11 @@ julia> print('X')
 X
 ```
 
-Notice how `display` provides the fancies output, with lengthy details and a new line. While `show` is much simpler, focusing on the Julian representation (it shows the char as a Julia type, wrapped in `'`). Finally, `print` provides the simplest and most generic output, avoiding Julia specific details. We're going to overload the `Base.show` method, to provide pretty printing for our `Board` type. 
+Notice how `display` provides the fancies output, with lengthy details. While `show` is much simpler, focusing on the Julian representation. Finally, `print` provides the simplest and most generic output, avoiding Julia specific details. We're going to overload the `Base.show` method, to provide pretty printing for our `Board` type. 
 
-For formatting we'll use a package called `PrettyTables`. This provides pretty printing for arrays, so we can use it to format the `Board.data` matrix. 
+For formatting we'll use a package called `PrettyTables`. It provides pretty printing for arrays, so we can use it to format the `Board.data` matrix. 
 
-We'll want to add this as a dependency for our project, so please go back to the REPL in Juno and type this: 
+We'll want to add this as a dependency for our project, so please go back to the REPL in Juno and run: 
 
 ```julia
 julia>] # enter Pkg mode
@@ -118,7 +116,7 @@ julia>] # enter Pkg mode
 (TicTacToe) pkg> add PrettyTables
 ```
 
-This will add the `PrettyTables` package to our project. In order make it available in our `TicTacToe` module, we need to declare that we're `using PrettyTables`. I also like to automatically activate the project's environment. Please update the `TicTacToe` module as follows: 
+This adds the `PrettyTables` package to our project. In order make it available to our `TicTacToe` module we need to declare that we're `using PrettyTables`. I also like to automatically activate the project's environment. Please update the `TicTacToe` module as follows: 
 
 ```julia
 # src/TicTacToe.jl
@@ -137,6 +135,7 @@ end
 We're all set now. Our `show` method will invoke the `PrettyTables.pretty_table` function. Add this at the bottom of the `TicTacToe` module: 
 
 ```julia
+# src/TicTacToe.jl
 export A, B, C
 
 const A = 'A'
@@ -149,15 +148,16 @@ Base.show(io::IO, board::Board) = pretty_table(board.data,
   																							show_row_number = true)
 ```
 
-The code defines a new `show` method for displaying `Board` types. The method uses the `pretty_table` function to render the `Board.data` matrix, using the `A`, `B`, `C` labels for columns, adding horizontal lines between rows `1` and `2` and row numbers. 
+The code defines a new `show` method for displaying `Board` types. It uses the `pretty_table` function to render the `Board.data` matrix, using the `A`, `B`, `C` labels for columns, adding horizontal lines between rows `1` and `2` and row numbers. 
 
-Now, to sort out the rendering of the `Cell`. Add this under the previous `show` declaration: 
+Now, the rendering of the `Cell`. Add this under the previous `show` declaration: 
 
 ```julia
+# src/TicTacToe.jl
 Base.show(io::IO, cell::Cell) = print(io, cell.value)
 ```
 
-We're simply saying that `show` should use the same unformatted char value as `print`, resulting in the actual letter, no quotes or anything. 
+We're simply saying that `show` should reuse the same unformatted char value as `print`, resulting in the actual letter, no quotes or anything. 
 
 If we reload the module and create a new board, we'll see the formatting in action: 
 
@@ -176,9 +176,9 @@ julia> board = Board()
 └─────┴───┴───┴───┘
 ```
 
-## Making some moves
+## Make your move
 
-Now that we can render the gameboard, it's time to add the logic for placing the Xs and Os. We'll define the `at` function which retrieves the cell _at_ a certain pair of coordinates, for example the cell at B,2 which is the center of the board. We'll also add the matching `at!` function which will be used for setting a cell's value. The first iteration looks like this: 
+Now that we can render the gameboard, it's time to add the logic for placing the Xs and Os. We'll define the `at` function which retrieves the cell _at_ a certain pair of coordinates, for example the cell at B,2 (the center of the board). We'll also add the matching `at!` function which will be used for setting a cell's value. The first iteration looks like this: 
 
 ```julia
 const labels = Dict{Char,Int}(A => 1, B => 2, C => 3)
@@ -194,7 +194,7 @@ function at!(board::Board, value::Char, coords::Pair{Char,Int}) :: Board
 end
 ```
 
-The functions are invoked as follows - getting or, respectively, setting, the corresponding cells:
+The functions can be used for getting or, respectively, setting, the corresponding cells:
 
 ```julia
 julia> at!(board, X, B=>2) # place X at column B row 2
@@ -207,7 +207,7 @@ julia> at!(board, X, B=>2) # place X at column B row 2
 ├─────┼───┼───┼───┤
 │   3 │   │   │   │
 └─────┴───┴───┴───┘
-julia> at(board, B=>2) # get the value at column B row 2
+julia> at(board, B=>2) # get the cell at column B row 2
 X
 ```
 
@@ -215,11 +215,7 @@ X
 
 ### Always be testing
 
-We've gone far enough with the development - it's time to add some tests before things get too complicated. Please create a `runtests.jl` file inside the `test/` folder: 
-
-```julia
-julia> touch("test/runtests.jl")
-```
+We've gone far enough with the development - time to add some tests before things get too complicated. Please create a `runtests.jl` file inside the `test/` folder.
 
 We can start by adding tests for creating an empty board - then setting and getting a cell: 
 
@@ -246,18 +242,18 @@ Test Summary:   | Pass  Total
 Board and cells |    2      2
 ```
 
-That looks great, but what if somebody would try to pass an invalid value, something other than X or O? 
+Looks great, but what if somebody tries to pass an invalid value, something other than X or O? 
 
 ```julia
 at!(board, 'Z', A=>3) # this should fail but it doesn't
 @test at(board, A=>3).value == 'Z' # the test passes, we have a Z on our board
 ```
 
-Our program is very gullable at this point and happily allows illegal moves. 
+Our program is very gullable and happily allows illegal moves. 
 
 #### Internal constructors
 
-In order to address this problem we need to control how new cells are created. For this we can define an internal constructor. These are special, in that all the external constructors automatically invoke the internal one. So if we define restrictions here, it will be impossible to create illegal cells. Update the `Cell` constructor to look like this: 
+In order to address this problem we need to control how new cells are created by defining an internal `Cell` constructor. These are special, in that all the external constructors automatically invoke the internal one. So if we define restrictions here, it will be impossible to create illegal cells. Update the `Cell` definition to look like this: 
 
 ```julia
 # src/TicTacToe.jl
@@ -348,16 +344,12 @@ function isvalidsequence(board::Board, cell::Cell) :: Bool
 end
 ```
 
-Now both `at` and `at!` perform validation on their inputs, ensuring that the coordinates are valid, the cell is empty, the passed value is legal, and the move sequence is correct. We define a series of utility functions to perform these validations - as well as the correspoding types of exceptions. 
+Now both `at` and `at!` perform validation on their inputs, ensuring that the coordinates are valid, the cell is empty, the passed value is legal, and the move sequence is correct. We defined a series of utility functions to perform these validations - as well as the correspoding types of exceptions. 
 
 And our updated tests: 
 
 ```julia
 # test/runtests.jl
-using Test
-include("../src/TicTacToe.jl")
-using .TicTacToe
-
 @testset "Board and cells" begin
   board = Board()
   @test at(board, A=>1).value == EMPTY
@@ -389,9 +381,9 @@ Board and cells |    9      9
 
 ## Get your game on
 
-We've done great: our game is robust and cheaters won't stand a chance to trick it. However, two important pieces of logic are still missing: checking if a game is over (either by winning or by draw) and playing a game. 
+We've done great: our game is robust and cheaters won't stand a chance. However, two important pieces of logic are still missing: checking if a game is over (either by winning or by draw) and playing a game. 
 
-We said that victory is achieved by placing three of the same peg in a **row**, **column**, or **diagonal**. These are key concepts and it would be useful to access them through functions which return the corresponding collections of cells. This is the code to be added to the `TicTacToe` module: 
+Victory is achieved by placing three of the same pegs in a **row**, **column**, or **diagonal**. These are key concepts and it would be useful to access them through functions which return the corresponding collections of cells. Here is the code to be added to the `TicTacToe` module: 
 
 ```julia
 # src/TicTacToe.jl
@@ -528,5 +520,4 @@ Your move, X
 
 The full code is available at https://github.com/essenciary/TicTacToe.jl
 
-Follow me on Twitter @essenciary https://twitter.com/essenciary to be notified about the upcoming chapters in our sequel. In the second part we'll build a smart Tic-Tac-Toe agent using Julia and we'll play against it. In the third, we'll publish our game on the internet, as a web app, allowing remote users to play against our bot. And in the 4th part, we'll construct a neural network and we'll train it using adversarial  reinforcement learning provided by our Tic-Tac-Toe bot. See you soon! 
-
+Follow me on Twitter [@essenciary](https://twitter.com/essenciary)  to be notified about the upcoming chapters in our sequel. In the second part we'll build a smart Tic-Tac-Toe agent using Julia and we'll play against it. In the third, we'll publish our game on the internet, as a web app, allowing remote users to play against our bot. And in the 4th part, we'll construct a neural network and we'll train it using adversarial  reinforcement learning provided by our Tic-Tac-Toe bot. See you soon! 
